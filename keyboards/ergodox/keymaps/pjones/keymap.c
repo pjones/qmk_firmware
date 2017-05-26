@@ -1,12 +1,25 @@
+/******************************************************************************/
 #include "ergodox.h"
 #include "debug.h"
 #include "action_layer.h"
 #include "version.h"
 
-#define BASE 0 // default layer
-#define SYMB 1 // symbols
-#define MDIA 2 // media keys
+/******************************************************************************/
+#define LAYER_BASE  0
+#define LAYER_SYMB  1
+#define LAYER_MEDIA 2
+#define LAYER_EMACS 3
 
+/******************************************************************************/
+#define M_VERSION     M(0)
+#define M_EMACS_FNT_U M(1)
+#define M_EMACS_FNT_D M(2)
+#define M_EMACS_FNT_R M(3)
+
+/******************************************************************************/
+static uint8_t g_usb_led;
+
+/******************************************************************************/
 enum custom_keycodes {
   PLACEHOLDER = SAFE_RANGE, // can always be here
   EPRM,
@@ -14,19 +27,23 @@ enum custom_keycodes {
   RGB_SLD
 };
 
+/******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-/******************************************************************************/
-// Keymap 0: Basic Layer
-[BASE] = KEYMAP(
+/*############################################################################*/
+/*
+ * 0: Basic Layer
+ */
+/*############################################################################*/
+[LAYER_BASE] = KEYMAP(
 
   /**********************************************************************/
   // Left Hand:
-  KC_MEDIA_PLAY_PAUSE,  KC_1,        KC_2,    KC_3,      KC_4,        KC_5, LGUI(LSFT(KC_7)),
-  LALT(LCTL(KC_SPACE)), KC_Q,        KC_W,    KC_E,      KC_R,        KC_T, KC_ESCAPE,
-  LALT(KC_SPACE),       GUI_T(KC_A), KC_S,    KC_D,      SFT_T(KC_F), KC_G, /* 2U ^^ */
-  KC_INSERT,            KC_Z,        KC_X,    KC_C,      KC_V,        KC_B, KC_TRANSPARENT,
-  KC_HOME,              KC_END,      KC_PGUP, KC_PGDOWN, TT(1),
+  KC_MEDIA_PLAY_PAUSE,  KC_1,        KC_2,    KC_3,      KC_4,           KC_5, LGUI(LSFT(KC_7)),
+  LALT(LCTL(KC_SPACE)), KC_Q,        KC_W,    KC_E,      KC_R,           KC_T, KC_ESCAPE,
+  LALT(KC_SPACE),       GUI_T(KC_A), KC_S,    KC_D,      SFT_T(KC_F),    KC_G, /* 2U ^^ */
+  KC_INSERT,            KC_Z,        KC_X,    KC_C,      KC_V,           KC_B, TT(LAYER_EMACS),
+  KC_HOME,              KC_END,      KC_PGUP, KC_PGDOWN, TT(LAYER_SYMB),
 
   // Left Thumb:
                      KC_TRANSPARENT, KC_TRANSPARENT,
@@ -35,11 +52,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   /**********************************************************************/
   // Right Hand:
-  LGUI(LSFT(KC_8)), KC_6,      KC_7,        KC_8,     KC_9,     KC_0,             KC_MEDIA_NEXT_TRACK,
-  KC_CAPSLOCK,      KC_Y,      KC_U,        KC_I,     KC_O,     KC_P,             KC_BSLASH,
-  /* 2U ^^ */       KC_H,      SFT_T(KC_J), KC_K,     KC_L,     GUI_T(KC_SCOLON), KC_QUOTE,
-  KC_TRANSPARENT,   KC_N,      KC_M,        KC_COMMA, KC_DOT,   KC_SLASH,         LALT(KC_PSCREEN),
-                               TT(2),       KC_LEFT,  KC_UP,    KC_DOWN,          KC_RIGHT,
+  LGUI(LSFT(KC_8)), KC_6,      KC_7,            KC_8,     KC_9,     KC_0,             KC_MEDIA_NEXT_TRACK,
+  KC_CAPSLOCK,      KC_Y,      KC_U,            KC_I,     KC_O,     KC_P,             KC_BSLASH,
+  /* 2U ^^ */       KC_H,      SFT_T(KC_J),     KC_K,     KC_L,     GUI_T(KC_SCOLON), KC_QUOTE,
+  KC_TRANSPARENT,   KC_N,      KC_M,            KC_COMMA, KC_DOT,   KC_SLASH,         LALT(KC_PSCREEN),
+                               TT(LAYER_MEDIA), KC_LEFT,  KC_UP,    KC_DOWN,          KC_RIGHT,
 
   // Right Thumb:
                   KC_TRANSPARENT,  KC_TRANSPARENT,
@@ -47,9 +64,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   LSFT(KC_RALT),  LT(1,KC_ENTER),  ALT_T(KC_SPACE)
 ),
 
-/******************************************************************************/
-// Keymap 1: Symbol Layer
-[SYMB] = KEYMAP(
+/*############################################################################*/
+/*
+ * 1: Symbol Layer
+ */
+/*############################################################################*/
+[LAYER_SYMB] = KEYMAP(
 
   /**********************************************************************/
   // Left Hand:
@@ -78,9 +98,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT
 ),
 
-/******************************************************************************/
-// Keymap 2: Media and Mouse Keys
-[MDIA] = KEYMAP(
+/*############################################################################*/
+/*
+ * 2: Media and Mouse Keys
+ */
+/*############################################################################*/
+[LAYER_MEDIA] = KEYMAP(
 
   /****************************************************************************/
   // Left Hand:
@@ -110,30 +133,80 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRANSPARENT,  KC_MS_BTN4,     KC_MS_BTN2
 
 ),
+
+/*############################################################################*/
+/*
+ * 3: Emacs
+ */
+/*############################################################################*/
+[LAYER_EMACS] = KEYMAP(
+
+  /****************************************************************************/
+  // Left Hand:
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+  M_EMACS_FNT_U,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, /* 2U ^^ */
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+
+  // Left Thumb:
+                  KC_TRANSPARENT, KC_TRANSPARENT,
+                                  KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+
+
+  /****************************************************************************/
+  // Right Hand:
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,       KC_TRANSPARENT,     KC_TRANSPARENT, KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,       KC_TRANSPARENT,     KC_TRANSPARENT, M_EMACS_FNT_R,
+  /* 2U ^^ */     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,       KC_TRANSPARENT,     KC_TRANSPARENT, M_EMACS_FNT_D,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_COMMA)), LALT(LSFT(KC_DOT)), KC_TRANSPARENT, KC_TRANSPARENT,
+                                  KC_TRANSPARENT, KC_TRANSPARENT,       KC_TRANSPARENT,     KC_TRANSPARENT, KC_TRANSPARENT,
+
+  // Right Thumb:
+                  KC_TRANSPARENT, KC_TRANSPARENT,
+                                  KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
+),
 };
 
+/******************************************************************************/
 const uint16_t PROGMEM fn_actions[] = {
-    [1] = ACTION_LAYER_TAP_TOGGLE(SYMB)                // FN1 - Momentary Layer 1 (Symbols)
+    [1] = ACTION_LAYER_TAP_TOGGLE(LAYER_SYMB)                // FN1 - Momentary Layer 1 (Symbols)
 };
 
+/******************************************************************************/
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
-  // MACRODOWN only works in this function
-      switch(id) {
-        case 0:
+    switch (id) {
+    case 0:
         if (record->event.pressed) {
-          SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
+            SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
         }
         break;
-        case 1:
-        if (record->event.pressed) { // For resetting EEPROM
-          eeconfig_init();
+    case 1:
+        if (record->event.pressed) {
+            // Emacs: Increase font size:
+            return MACRO( D(LCTL), T(X), T(EQUAL), T(G), U(LCTL),  END );
         }
         break;
-      }
+    case 2:
+        if (record->event.pressed) {
+            // Emacs: Decrease font size:
+            return MACRO( D(LCTL), T(X), T(MINUS), T(G), U(LCTL),  END );
+        }
+        break;
+    case 3:
+        if (record->event.pressed) {
+            // Emacs: Reset font size:
+            return MACRO( D(LCTL), T(X), T(0), T(G), U(LCTL),  END );
+        }
+        break;
+    }
     return MACRO_NONE;
 };
 
+/******************************************************************************/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     // dynamically generate these.
@@ -161,28 +234,41 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+/******************************************************************************/
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
+    g_usb_led = 0;
 };
 
-
+/******************************************************************************/
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
     uint8_t layer = biton32(layer_state);
 
-    ergodox_board_led_off();
-    ergodox_right_led_1_off();
-    ergodox_right_led_2_off();
-    ergodox_right_led_3_off();
+    // Reset all the LEDs:
+    ergodox_led_all_off();
 
-    switch (layer) {
-    case 1:
-        ergodox_right_led_1_on();
-        break;
-    case 2:
-        ergodox_right_led_2_on();
-        break;
-    default:
-        break;
+    if (g_usb_led & (1<<USB_LED_CAPS_LOCK)) {
+        // Caps lock light should be on:
+        ergodox_led_all_on();
+    } else {
+        switch (layer) {
+        case 1:
+            ergodox_right_led_1_on();
+            break;
+        case 2:
+            ergodox_right_led_2_on();
+            break;
+        case 3:
+            ergodox_right_led_3_on();
+            break;
+        default:
+            break;
+        }
     }
 };
+
+/******************************************************************************/
+void led_set_kb(uint8_t usb_led) {
+    g_usb_led = usb_led;
+}
