@@ -42,7 +42,7 @@ enum {
     TD_TAB_OR_ALTSPC = 0,
     TD_ENTER_SUPER,
     TD_SYMB_OR_NUMBERS,
-    TD_SYMB_OR_MEDIA
+    TD_NUMBERS_OR_MEDIA
 };
 
 /******************************************************************************/
@@ -75,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                TD(TD_ENTER_SUPER),  KC_NO,    KC_NO,    KC_NO,            KC_NO,
 
   // Right Thumb:
-  KC_NO, KC_NO, KC_NO, KC_NO, TD(TD_SYMB_OR_MEDIA), ALT_T(KC_SPACE)
+  KC_NO, KC_NO, KC_NO, KC_NO, TD(TD_NUMBERS_OR_MEDIA), ALT_T(KC_SPACE)
 ),
 
 /*############################################################################*/
@@ -403,9 +403,9 @@ qk_tap_dance_action_t tap_dance_actions[] = {
                                                })
     },
 
-    [TD_SYMB_OR_MEDIA] = {
+    [TD_NUMBERS_OR_MEDIA] = {
         .fn = { dance_layer_each, NULL, dance_layer_reset},
-        .user_data = (void *)&((dance_layer_t) { LAYER_SYMB
+        .user_data = (void *)&((dance_layer_t) { LAYER_NUMBERS
                                                , LAYER_MEDIA
                                                })
     },
