@@ -228,6 +228,13 @@ void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
  * Reset function for `dance_layer_each'.
  */
 void dance_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
+    // Key held down longer than timeout with no other keys.  Should
+    // turn layers off to act like the modifier tapping keys.
+    uint16_t tap_timeout = TAPPING_TERM + 100;
+
+    if (!state->interrupted && timer_elapsed(state->timer) > tap_timeout)
+        layer_clear();
+
     if (state->interrupted)
         layer_clear();
 }
