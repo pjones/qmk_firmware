@@ -6,7 +6,6 @@
 
 /******************************************************************************/
 static uint8_t g_usb_led;
-static uint8_t g_super_on;
 
 /******************************************************************************/
 typedef struct {
@@ -40,9 +39,20 @@ enum {
 /******************************************************************************/
 enum {
     TD_TAB_OR_ALTSPC = 0,
-    TD_ENTER_SUPER,
     TD_SYMB_OR_NUMBERS,
-    TD_NUMBERS_OR_MEDIA
+    TD_NUMBERS_OR_MEDIA,
+    TD_PAREN,
+    TD_CURLY,
+    TD_SQUARE,
+    TD_ANGLE,
+    TD_ESC_CAPS,
+    TD_QUOTE
+};
+
+/******************************************************************************/
+enum {
+    M_EMACS_PLUS = 0,
+    M_EMACS_MINU
 };
 
 /******************************************************************************/
@@ -72,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_NO,            KC_Y,      KC_U,                KC_I,     KC_O,     KC_P,             KC_NO,
   /* 2U ^^ */       KC_H,      SFT_T(KC_J),         KC_K,     KC_L,     GUI_T(KC_SCOLON), KC_NO,
   KC_NO,            KC_N,      KC_M,                KC_COMMA, KC_DOT,   KC_SLASH,         LALT(KC_PSCREEN),
-                               TD(TD_ENTER_SUPER),  KC_NO,    KC_NO,    KC_NO,            KC_NO,
+                               KC_ENTER,            KC_NO,    KC_NO,    KC_NO,            KC_NO,
 
   // Right Thumb:
   KC_NO, KC_NO, KC_NO, KC_NO, TD(TD_NUMBERS_OR_MEDIA), ALT_T(KC_SPACE)
@@ -87,22 +97,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   /**********************************************************************/
   // Left Hand:
-  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_GRAVE,       KC_BSLASH,      KC_PIPE,        KC_PLUS,        KC_EQUAL,         KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_EXLM,        KC_AT,          KC_HASH,        KC_DLR,         KC_PERCENT,       /* 2U ^^ */
-  KC_TRANSPARENT, KC_ESCAPE,      KC_LCBR,        KC_RCBR,        KC_TILD,        LALT(KC_PSCREEN), KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_BSLASH,       KC_TRANSPARENT, KC_PIPE,        KC_PLUS,        KC_EQUAL,         KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_EXLM,         KC_AT,          KC_HASH,        KC_DLR,         KC_PERCENT,       /* 2U ^^ */
+  KC_TRANSPARENT, TD(TD_ESC_CAPS), KC_TRANSPARENT, KC_TRANSPARENT, KC_TILD,        LALT(KC_PSCREEN), KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
   // Left Thumb:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
   /**********************************************************************/
   // Right Hand:
-  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_UNDS,        KC_MINUS,        KC_RALT,        KC_DOUBLE_QUOTE, KC_QUOTE,       KC_TRANSPARENT,
-  /* 2U ^^     */ KC_CIRC,        KC_AMPR,         KC_ASTR,        KC_LPRN,         KC_RPRN,        KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_INSERT,      LSFT(KC_INSERT), KC_LBRACKET,    KC_RBRACKET,     KC_CAPSLOCK,    KC_TRANSPARENT,
-                                  KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_UNDS,        KC_MINUS,        TD(TD_ANGLE),   TD(TD_CURLY),    TD(TD_SQUARE),   KC_TRANSPARENT,
+  /* 2U ^^     */ KC_CIRC,        KC_AMPR,         KC_ASTR,        TD(TD_PAREN),    TD(TD_QUOTE),    KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_INSERT,      LSFT(KC_INSERT), KC_RALT,        M(M_EMACS_PLUS), M(M_EMACS_MINU), KC_TRANSPARENT,
+                                  KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
 
   // Right Thumb:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
@@ -119,7 +129,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
   KC_TRANSPARENT, KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,          KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           /* 2U ^^ */
+  KC_TRANSPARENT, GUI_T(KC_1),    KC_2,           KC_3,           KC_4,           KC_5,           /* 2U ^^ */
   KC_TRANSPARENT, KC_F11,         KC_F12,         KC_HASH,        KC_DOLLAR,      KC_PERCENT,     KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -131,7 +141,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Right Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
   KC_TRANSPARENT, KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_TRANSPARENT,
-  /* 2U ^^ */     KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_TRANSPARENT,
+  /* 2U ^^ */     KC_6,           KC_7,           KC_8,           KC_9,           GUI_T(KC_0),    KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_COMMA,       KC_DOT,         KC_COLON,       KC_TRANSPARENT,
                                   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -150,7 +160,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,      KC_TRANSPARENT,      KC_TRANSPARENT,      KC_TRANSPARENT,
   KC_TRANSPARENT, KC_HOME,        LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_END,         LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /* 2U ^^ */
+  KC_TRANSPARENT, GUI_T(KC_END),  LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /* 2U ^^ */
   KC_TRANSPARENT, KC_MS_ACCEL0,   KC_TRANSPARENT,   KC_MS_BTN3,          KC_MS_BTN1,          KC_MS_BTN2,          KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,      KC_TRANSPARENT,
 
@@ -175,65 +185,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /******************************************************************************/
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
-    if (record->event.pressed) {
-        switch (id) {
-        case 0:
-            SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
-            break;
-        }
-    }
+    switch(id) {
+    case M_EMACS_PLUS:
+        return MACRODOWN(D(LCTL), T(X), T(EQUAL), T(G), U(LCTL), END);
+    case M_EMACS_MINU:
+        return MACRODOWN(D(LCTL), T(X), T(MINUS), T(G), U(LCTL), END);
+    };
 
     return MACRO_NONE;
 };
-
-/******************************************************************************/
-/*
- * Tap Dance function that sends Enter if tapped once, and if tapped
- * twice, the super modifier will be turned on and held down until the
- * key is tapped twice again.
- *
- * A global variable is updated so that the LEDs can be updated to
- * remind you the super key is locked on.
- */
-void dance_lock_super_finish(qk_tap_dance_state_t *state, void *user_data) {
-    switch (state->count) {
-    case 1:
-        if (g_super_on) {
-            unregister_code(KC_LGUI);
-            g_super_on = 0;
-        } else {
-            register_code(KC_ENTER);
-        }
-        break;
-    case 2:
-        if (g_super_on) {
-            unregister_code(KC_LGUI);
-            g_super_on = 0;
-        } else {
-            register_code(KC_LGUI);
-            g_super_on = 1;
-        }
-        break;
-    }
-}
-
-/******************************************************************************/
-/*
- * Reset function for `dance_lock_super_finish'.
- */
-void dance_lock_super_reset(qk_tap_dance_state_t *state, void *user_data) {
-    switch (state->count) {
-    case 1:
-        unregister_code(KC_ENTER);
-        break;
-    case 2:
-        if (state->interrupted && g_super_on) {
-            unregister_code(KC_LGUI);
-            g_super_on = 0;
-        }
-        break;
-    }
-}
 
 /******************************************************************************/
 /*
@@ -337,7 +297,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
     g_usb_led = 0;
-    g_super_on = 0;
 };
 
 /******************************************************************************/
@@ -351,9 +310,6 @@ void matrix_scan_user(void) {
     if (g_usb_led & (1<<USB_LED_CAPS_LOCK)) {
         // Caps lock light should be on:
         ergodox_led_all_on();
-    } else if (g_super_on) {
-        ergodox_right_led_1_on();
-        ergodox_right_led_3_on();
     } else {
         switch (layer) {
         case 1:
@@ -391,11 +347,6 @@ qk_tap_dance_action_t tap_dance_actions[] = {
                                                   })
     },
 
-    [TD_ENTER_SUPER] = {
-        .fn = { NULL, dance_lock_super_finish, dance_lock_super_reset },
-        .user_data = NULL
-    },
-
     [TD_SYMB_OR_NUMBERS] = {
         .fn = { dance_layer_each, NULL, dance_layer_reset},
         .user_data = (void *)&((dance_layer_t) { LAYER_SYMB
@@ -409,4 +360,18 @@ qk_tap_dance_action_t tap_dance_actions[] = {
                                                , LAYER_MEDIA
                                                })
     },
+
+    [TD_PAREN]    = ACTION_TAP_DANCE_DOUBLE(KC_LPRN,      KC_RPRN),
+    [TD_CURLY]    = ACTION_TAP_DANCE_DOUBLE(KC_LCBR,      KC_RCBR),
+    [TD_SQUARE]   = ACTION_TAP_DANCE_DOUBLE(KC_LBRACKET,  KC_RBRACKET),
+    [TD_ANGLE]    = ACTION_TAP_DANCE_DOUBLE(KC_LABK,      KC_RABK),
+    [TD_ESC_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_ESCAPE,    KC_CAPSLOCK),
+
+    [TD_QUOTE] = {
+        .fn = { NULL, dance_multitap_finish, dance_multitap_reset },
+        .user_data = (void *)&((dance_multitap_t) { KC_QUOTE
+                                                  , KC_DOUBLE_QUOTE
+                                                  , KC_GRAVE
+                                                  })
+    }
 };
