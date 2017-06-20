@@ -5,7 +5,8 @@
 #include "version.h"
 
 /******************************************************************************/
-static uint8_t g_usb_led;
+static uint8_t g_usb_led    = 0;
+static bool    g_layer_lock = false;
 
 /******************************************************************************/
 typedef struct {
@@ -99,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,
   KC_TRANSPARENT, KC_BSLASH,       KC_TRANSPARENT, KC_PIPE,        KC_PLUS,        KC_EQUAL,         KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_EXLM,         KC_AT,          KC_HASH,        KC_DLR,         KC_PERCENT,       /* 2U ^^ */
+  KC_TRANSPARENT, KC_EXLM,         KC_AT,          KC_HASH,        SFT_T(KC_DLR),  KC_PERCENT,       /* 2U ^^ */
   KC_TRANSPARENT, TD(TD_ESC_CAPS), KC_DELETE,      KC_TRANSPARENT, KC_TILD,        LALT(KC_PSCREEN), KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -110,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Right Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
   KC_TRANSPARENT, KC_UNDS,        KC_MINUS,        TD(TD_ANGLE),   TD(TD_CURLY),    TD(TD_SQUARE),   KC_TRANSPARENT,
-  /* 2U ^^     */ KC_CIRC,        KC_AMPR,         KC_ASTR,        TD(TD_PAREN),    TD(TD_QUOTE),    KC_TRANSPARENT,
+  /* 2U ^^     */ KC_CIRC,        SFT_T(KC_AMPR),  KC_ASTR,        TD(TD_PAREN),    TD(TD_QUOTE),    KC_TRANSPARENT,
   KC_TRANSPARENT, KC_INSERT,      LSFT(KC_INSERT), KC_RALT,        M(M_EMACS_PLUS), M(M_EMACS_MINU), KC_TRANSPARENT,
                                   KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
 
@@ -129,7 +130,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
   KC_TRANSPARENT, KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,          KC_TRANSPARENT,
-  KC_TRANSPARENT, GUI_T(KC_1),    KC_2,           KC_3,           KC_4,           KC_5,           /* 2U ^^ */
+  KC_TRANSPARENT, GUI_T(KC_1),    KC_2,           KC_3,           SFT_T(KC_4),    KC_5,           /* 2U ^^ */
   KC_TRANSPARENT, KC_F11,         KC_F12,         KC_HASH,        KC_DOLLAR,      KC_PERCENT,     KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -141,7 +142,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Right Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
   KC_TRANSPARENT, KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_TRANSPARENT,
-  /* 2U ^^ */     KC_6,           KC_7,           KC_8,           KC_9,           GUI_T(KC_0),    KC_TRANSPARENT,
+  /* 2U ^^ */     KC_6,           SFT_T(KC_7),    KC_8,           KC_9,           GUI_T(KC_0),    KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_COMMA,       KC_DOT,         KC_COLON,       KC_TRANSPARENT,
                                   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -158,10 +159,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   /****************************************************************************/
   // Left Hand:
-  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,      KC_TRANSPARENT,      KC_TRANSPARENT,      KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_HOME,        LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    KC_TRANSPARENT,
-  KC_TRANSPARENT, GUI_T(KC_END),  LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /* 2U ^^ */
-  KC_TRANSPARENT, KC_MS_ACCEL0,   KC_TRANSPARENT,   KC_MS_BTN3,          KC_MS_BTN1,          KC_MS_BTN2,          KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,      KC_TRANSPARENT,             KC_TRANSPARENT,      KC_TRANSPARENT,
+  KC_TRANSPARENT, KC_HOME,        LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),           LGUI(LSFT(KC_6)),    KC_TRANSPARENT,
+  KC_TRANSPARENT, GUI_T(KC_END),  LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, SFT_T(KC_MEDIA_NEXT_TRACK), KC_MEDIA_PLAY_PAUSE, /* 2U ^^ */
+  KC_TRANSPARENT, KC_MS_ACCEL0,   KC_TRANSPARENT,   KC_MS_BTN3,          KC_MS_BTN1,                 KC_MS_BTN2,          KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,      KC_TRANSPARENT,
 
   // Left Thumb:
@@ -172,7 +173,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Right Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
   KC_TRANSPARENT, KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_UP,       KC_MS_RIGHT,    KC_PGUP,        KC_TRANSPARENT,
-  /* 2U ^^ */     KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_PGDOWN,      KC_TRANSPARENT,
+  /* 2U ^^ */     KC_LEFT,        SFT_T(KC_DOWN), KC_UP,          KC_RIGHT,       KC_PGDOWN,      KC_TRANSPARENT,
   KC_TRANSPARENT, KC_MS_WH_LEFT,  KC_MS_WH_DOWN,  KC_MS_WH_UP,    KC_MS_WH_RIGHT, KC_MS_ACCEL2,   KC_TRANSPARENT,
                                   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -208,12 +209,22 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
     dance_layer_t *layers = (dance_layer_t *)user_data;
     uint8_t layer = biton32(layer_state);
+    bool shift_is_on = get_mods() & (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT));
 
     layer_clear();
 
+    // Test if layer locking is changing:
+    if (state->count == 1) {
+        g_layer_lock = g_layer_lock || shift_is_on;
+
+        if (layer != 0 && shift_is_on) {
+            g_layer_lock = false;
+            return;
+        }
+    }
+
     switch (state->count) {
     case 1:
-        if (layer != 0) break;
         layer_on(layers->tap_layer_one);
         break;
 
@@ -228,15 +239,10 @@ void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
  * Reset function for `dance_layer_each'.
  */
 void dance_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // Key held down longer than timeout with no other keys.  Should
-    // turn layers off to act like the modifier tapping keys.
-    uint16_t tap_timeout = TAPPING_TERM + 100;
-
-    if (!state->interrupted && timer_elapsed(state->timer) > tap_timeout)
+    if (state->interrupted || !g_layer_lock) {
         layer_clear();
-
-    if (state->interrupted)
-        layer_clear();
+        g_layer_lock = false;
+    }
 }
 
 /******************************************************************************/
@@ -358,6 +364,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
         .fn = { dance_layer_each, NULL, dance_layer_reset},
         .user_data = (void *)&((dance_layer_t) { LAYER_SYMB
                                                , LAYER_NUMBERS
+                                               , false
                                                })
     },
 
@@ -365,6 +372,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
         .fn = { dance_layer_each, NULL, dance_layer_reset},
         .user_data = (void *)&((dance_layer_t) { LAYER_NUMBERS
                                                , LAYER_MEDIA
+                                               , false
                                                })
     },
 
