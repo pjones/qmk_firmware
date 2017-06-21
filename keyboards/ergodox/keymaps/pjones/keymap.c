@@ -100,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT,
   KC_TRANSPARENT, KC_BSLASH,       KC_TRANSPARENT, KC_PIPE,        KC_PLUS,        KC_EQUAL,         KC_TRANSPARENT,
-  KC_TRANSPARENT, KC_EXLM,         KC_AT,          KC_HASH,        SFT_T(KC_DLR),  KC_PERCENT,       /* 2U ^^ */
+  KC_TRANSPARENT, KC_EXLM,         KC_AT,          KC_HASH,        KC_DLR,         KC_PERCENT,       /* 2U ^^ */
   KC_TRANSPARENT, TD(TD_ESC_CAPS), KC_DELETE,      KC_TRANSPARENT, KC_TILD,        LALT(KC_PSCREEN), KC_TRANSPARENT,
   KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
@@ -111,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Right Hand:
   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
   KC_TRANSPARENT, KC_UNDS,        KC_MINUS,        TD(TD_ANGLE),   TD(TD_CURLY),    TD(TD_SQUARE),   KC_TRANSPARENT,
-  /* 2U ^^     */ KC_CIRC,        SFT_T(KC_AMPR),  KC_ASTR,        TD(TD_PAREN),    TD(TD_QUOTE),    KC_TRANSPARENT,
+  /* 2U ^^     */ KC_CIRC,        KC_AMPR,         KC_ASTR,        TD(TD_PAREN),    TD(TD_QUOTE),    KC_TRANSPARENT,
   KC_TRANSPARENT, KC_INSERT,      LSFT(KC_INSERT), KC_RALT,        M(M_EMACS_PLUS), M(M_EMACS_MINU), KC_TRANSPARENT,
                                   KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT,  KC_TRANSPARENT,
 
@@ -288,22 +288,22 @@ void dance_multitap_reset(qk_tap_dance_state_t *state, void *user_data) {
 
 /******************************************************************************/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    // dynamically generate these.
+    switch (keycode) {
     case EPRM:
-      if (record->event.pressed) {
-        eeconfig_init();
-      }
-      return false;
-      break;
+        if (record->event.pressed) {
+            eeconfig_init();
+        }
+        return false;
+        break;
     case VRSN:
-      if (record->event.pressed) {
-        SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
-      }
-      return false;
-      break;
-  }
-  return true;
+        if (record->event.pressed) {
+            SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
+        }
+        return false;
+        break;
+    }
+
+    return true;
 }
 
 /******************************************************************************/
