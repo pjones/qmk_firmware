@@ -39,6 +39,14 @@ enum {
 
 /******************************************************************************/
 enum {
+  DR_LSFT_F = 0,
+  DR_LSFT_J,
+  DR_LCTL_BSPACE,
+  DR_LALT_SPACE
+};
+
+/******************************************************************************/
+enum {
     TD_TAB_OR_ALTSPC = 0,
     TD_SYMB_OR_NUMBERS,
     TD_NUMBERS_OR_MEDIA,
@@ -70,23 +78,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Left Hand:
   KC_MEDIA_PLAY_PAUSE,  KC_NO,       KC_NO,   KC_NO,     KC_NO,                KC_NO, LGUI(LSFT(KC_7)),
   KC_NO,                KC_Q,        KC_W,    KC_E,      KC_R,                 KC_T,  KC_NO,
-  KC_NO,                GUI_T(KC_A), KC_S,    KC_D,      SFT_T(KC_F),          KC_G,  /* 2U ^^ */
+  KC_NO,                GUI_T(KC_A), KC_S,    KC_D,      DR(DR_LSFT_F),        KC_G,  /* 2U ^^ */
   KC_NO,                KC_Z,        KC_X,    KC_C,      KC_V,                 KC_B,  KC_NO,
   KC_NO,                KC_NO,       KC_NO,   KC_NO,     TD(TD_TAB_OR_ALTSPC),
 
   // Left Thumb:
-  KC_NO, KC_NO, KC_NO, CTL_T(KC_BSPACE), TD(TD_SYMB_OR_NUMBERS), KC_NO,
+  KC_NO, KC_NO, KC_NO, DR(DR_LCTL_BSPACE), TD(TD_SYMB_OR_NUMBERS), KC_NO,
 
   /**********************************************************************/
   // Right Hand:
   LGUI(LSFT(KC_8)), KC_NO,     KC_NO,               KC_NO,    KC_NO,    KC_NO,            KC_MEDIA_NEXT_TRACK,
   KC_NO,            KC_Y,      KC_U,                KC_I,     KC_O,     KC_P,             KC_NO,
-  /* 2U ^^ */       KC_H,      SFT_T(KC_J),         KC_K,     KC_L,     GUI_T(KC_SCOLON), KC_NO,
+  /* 2U ^^ */       KC_H,      DR(DR_LSFT_J),       KC_K,     KC_L,     GUI_T(KC_SCOLON), KC_NO,
   KC_NO,            KC_N,      KC_M,                KC_COMMA, KC_DOT,   KC_SLASH,         LALT(KC_PSCREEN),
                                KC_ENTER,            KC_NO,    KC_NO,    KC_NO,            KC_NO,
 
   // Right Thumb:
-  KC_NO, KC_NO, KC_NO, KC_NO, TD(TD_NUMBERS_OR_MEDIA), ALT_T(KC_SPACE)
+  KC_NO, KC_NO, KC_NO, KC_NO, TD(TD_NUMBERS_OR_MEDIA), DR(DR_LALT_SPACE)
 ),
 
 /*############################################################################*/
@@ -348,6 +356,14 @@ void led_set_kb(uint8_t usb_led) {
 /******************************************************************************/
 const uint16_t PROGMEM fn_actions[] = {
     [1] = ACTION_LAYER_TAP_TOGGLE(LAYER_SYMB) // FN1 - Momentary Layer 1 (Symbols)
+};
+
+/******************************************************************************/
+qk_dual_role_pair_t dual_role_keys[] = {
+  [DR_LSFT_F]      = DUAL_ROLE(MOD_LSFT, KC_F),
+  [DR_LSFT_J]      = DUAL_ROLE(MOD_LSFT, KC_J),
+  [DR_LCTL_BSPACE] = DUAL_ROLE(MOD_LCTL, KC_BSPACE),
+  [DR_LALT_SPACE]  = DUAL_ROLE(MOD_LALT, KC_SPACE)
 };
 
 /******************************************************************************/
