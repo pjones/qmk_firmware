@@ -30,6 +30,7 @@ static inline void dual_role_end(uint16_t keycode, keyrecord_t *record) {
   if ((keycode - QK_DUAL_ROLE) != dual_role_state.index) {
     keycode = dual_role_keys[keycode - QK_DUAL_ROLE].key;
     unregister_code(keycode);
+    return;
   }
 
   if (dual_role_state.interrupted ||
