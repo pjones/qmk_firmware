@@ -1,0 +1,19 @@
+#ifndef KEYBOARDS_MINIDOX_PJONES_CONFIG_H
+#define KEYBOARDS_MINIDOX_PJONES_CONFIG_H
+
+#include "../config.h"
+
+#undef I2C_MASTER_LEFT
+#undef I2C_MASTER_RIGHT
+#define EE_HANDS
+
+#define MOUSEKEY_INTERVAL       20
+#define MOUSEKEY_DELAY          0
+#define MOUSEKEY_TIME_TO_MAX    60
+#define MOUSEKEY_MAX_SPEED      7
+#define MOUSEKEY_WHEEL_DELAY    0
+
+#define TAPPING_TOGGLE          1
+#define TAPPING_TERM            200
+
+#endif // KEYBOARDS_MINIDOX_PJONES_CONFIG_H
