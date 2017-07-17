@@ -3,7 +3,7 @@
 
 /******************************************************************************/
 static uint8_t g_usb_led    = 0;
-static bool    g_layer_lock = false;
+static uint8_t g_layer_keys = 0;
 
 /******************************************************************************/
 typedef struct {
@@ -12,16 +12,8 @@ typedef struct {
 } dance_layer_t;
 
 /******************************************************************************/
-typedef struct {
-  uint16_t tap_kc1;
-  uint16_t tap_kc2;
-  uint16_t tap_kc3;
-} dance_multitap_t;
-
-/******************************************************************************/
 enum custom_keycodes {
   PLACEHOLDER = SAFE_RANGE, // can always be here
-  EPRM,
 };
 
 /******************************************************************************/
@@ -29,19 +21,20 @@ enum {
   LAYER_BASE = 0,
   LAYER_SYMB,
   LAYER_NUMBERS,
-  LAYER_MEDIA
+  LAYER_MOVEMENT,
+  LAYER_WINMGR,
+  LAYER_MOUSE,
+  LAYER_DRAW
 };
 
 /******************************************************************************/
 enum {
-  TD_TAB_OR_ALTSPC = 0,
-  TD_SYMB_OR_NUMBERS,
-  TD_NUMBERS_OR_MEDIA,
+  TD_SYMB_OR_MOUSE = 0,
+  TD_NUMBERS_OR_WINMGR,
   TD_PAREN,
   TD_CURLY,
   TD_SQUARE,
   TD_ANGLE,
-  TD_ESC_CAPS,
   TD_QUOTE
 };
 
@@ -52,8 +45,12 @@ enum {
 };
 
 /******************************************************************************/
-#define ___________ KC_TRANSPARENT
-#define XXXXXXXXXXX KC_NO
+#define ________    KC_TRANSPARENT
+#define XXXXXXXX    KC_NO
+#define JUST_1_SPC  LCTL(LALT(KC_SPACE))
+#define LAYER_LEFT  TD(TD_SYMB_OR_MOUSE)
+#define LAYER_RIGHT TD(TD_NUMBERS_OR_WINMGR)
+#define DRAW_KEY    LT(LAYER_DRAW, KC_NO)
 
 /******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -63,23 +60,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,----------------------------------.           ,----------------------------------.
  * |   Q  |   W  |   E  |   R  |   T  |           |   Y  |   U  |   I  |   O  |   P  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |   A  |   S  |   D  |   F  |   G  |           |   H  |   J  |   K  |   L  |   ;  |
+ * |   A  |   S  |   D  |   F  |   G  |           |   H  |   J  |   K  |   L  |Enter |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |   Z  |   X  |   C  |   V  |   B  |           |   N  |   M  |   ,  |   .  |   /  |
  * `----------------------------------'           `----------------------------------'
- *                  ,--------------------.    ,------,-------------.
- *                  | TAB  | LAYER| BSpc |    | Space| LAYER| Enter|
- *                  `-------------|      |    |      |------+------.
+ *                  ,--------------------.    ,------,---------------.
+ *                  |DRAW | LAYER | BSpc |    | Space| LAYER | Enter |
+ *                  `-------------|      |    |      |-------+-------.
  *                                | Ctrl |    | Alt  |
  *                                `------'    `------'
  */
 [LAYER_BASE] = KEYMAP(
-  KC_Q,        KC_W,   KC_E,  KC_R,        KC_T,         KC_Y,  KC_U,         KC_I,    KC_O,    KC_P,
-  GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G,         KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_SCOLON),
-  KC_Z,        KC_X,   KC_C,  KC_V,        KC_B,         KC_N,  KC_M,         KC_COMM, KC_DOT,  KC_SLSH,
-
-  TD(TD_TAB_OR_ALTSPC), TD(TD_SYMB_OR_NUMBERS), CTL_T(KC_BSPACE),        ALT_T(KC_SPACE), TD(TD_NUMBERS_OR_MEDIA), KC_ENTER
-  ),
+  KC_Q,        KC_W,   KC_E,  KC_R,        KC_T, /*|*/ KC_Y,  KC_U,         KC_I,    KC_O,    KC_P,
+  GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G, /*|*/ KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_ENT),
+  KC_Z,        KC_X,   KC_C,  KC_V,        KC_B, /*|*/ KC_N,  KC_M,         KC_COMM, KC_DOT,  KC_SLSH,
+                                                 /*|*/
+         DRAW_KEY, LAYER_LEFT, CTL_T(KC_BSPACE), /*|*/ ALT_T(KC_SPACE), LAYER_RIGHT, KC_ENTER
+),
 
 /* LAYER_SYMB
  *
@@ -88,63 +85,135 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |  !   |  @   |  #   |  $   |  %   |           |   ^  |   &  |  *   | (  ) | '  " |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |ESC/CL| DEL  |      |  ~   |      |           |  Ins |S-Ins |AltGR |Font +|Font -|
+ * | ESC  |      | J1S  |  ~   |AltGR |           |  :   |  ;   |      |Font +|Font -|
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
- *                  | TAB | LAYER | BSpc |    | Space| LAYER | Enter |
+ *                  |     |       |      |    |      |       |       |
  *                  `-------------|      |    |      |-------+-------.
- *                                | Ctrl |    | Alt  |
+ *                                |      |    |      |
  *                                `------'    `------'
  */
 [LAYER_SYMB] = KEYMAP(
-  KC_BSLASH,       KC_GRAVE,  KC_PIPE,     KC_PLUS, KC_EQUAL,                KC_UNDS,     KC_MINUS,        TD(TD_ANGLE), TD(TD_CURLY),    TD(TD_SQUARE),
-  KC_EXLM,         KC_AT,     KC_HASH,     KC_DLR,  KC_PERCENT,              KC_CIRC,     KC_AMPR,         KC_ASTR,      TD(TD_PAREN),    TD(TD_QUOTE),
-  TD(TD_ESC_CAPS), KC_DELETE, ___________, KC_TILD, LALT(KC_PSCREEN),        KC_INSERT,   LSFT(KC_INSERT), KC_RALT,      M(M_EMACS_PLUS), M(M_EMACS_MINU),
-                              ___________, ___________, ___________,         ___________, ___________,  ___________
+  KC_BSLASH, KC_GRAVE,  KC_PIPE,    KC_PLUS, KC_EQUAL,   /*|*/ KC_UNDS,  KC_MINUS, TD(TD_ANGLE), TD(TD_CURLY),    TD(TD_SQUARE),
+  KC_EXLM,   KC_AT,     KC_HASH,    KC_DLR,  KC_PERCENT, /*|*/ KC_CIRC,  KC_AMPR,  KC_ASTR,      TD(TD_PAREN),    TD(TD_QUOTE),
+  KC_ESC,    KC_DELETE, JUST_1_SPC, KC_TILD, KC_RALT,    /*|*/ KC_COLON, KC_SCLN,  XXXXXXXX,     M(M_EMACS_PLUS), M(M_EMACS_MINU),
+                                                         /*|*/
+                         ________, ________, ________,   /*|*/ ________, ________, ________
 ),
 
 /* LAYER_NUMBERS
  *
  * ,----------------------------------.           ,----------------------------------.
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * |  F1  |  F2  |  F3  |  F4  |  F5  |           |  F6  |  F7  |  F8  | F11  | F12  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * |   1  |   2  |   3  |   4  |   5  |           |   6  |   7  |   8  |   9  |   0  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * | F13  | F14  |   #  |   $  |   %  |           |   :  |   -  |   ,  |   .  |   /  |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
- *                  | TAB | LAYER | BSpc |    | Space| LAYER | Enter |
+ *                  |     |       |      |    |      |       |       |
  *                  `-------------|      |    |      |-------+-------.
- *                                | Ctrl |    | Alt  |
+ *                                |      |    |      |
  *                                `------'    `------'
- */
+  */
 [LAYER_NUMBERS] = KEYMAP(
-  KC_F1,       KC_F2,  KC_F3,   KC_F4,       KC_F5,              KC_F6,       KC_F7,       KC_F8,    KC_F9,  KC_F10,
-  GUI_T(KC_1), KC_2,   KC_3,    SFT_T(KC_4), KC_5,               KC_6,        SFT_T(KC_7), KC_8,     KC_9,   GUI_T(KC_0),
-  KC_F11,      KC_F12, KC_HASH, KC_DOLLAR,   KC_PERCENT,         ___________, KC_MINUS,    KC_COMMA, KC_DOT, KC_SLASH,
-                 ___________, ___________,  ___________,         ___________, ___________, ___________
+  KC_F1,  KC_F2,  KC_F3,   KC_F4,     KC_F5,      /*|*/ KC_F6,    KC_F7,    KC_F8,    KC_F11, KC_F12,
+  KC_1,   KC_2,   KC_3,    KC_4,      KC_5,       /*|*/ KC_6,     KC_7,     KC_8,     KC_9,   KC_0,
+  KC_F13, KC_F14, KC_HASH, KC_DOLLAR, KC_PERCENT, /*|*/ KC_COLON, KC_MINUS, KC_COMMA, KC_DOT, KC_SLASH,
+                                                  /*|*/
+                   ________, ________,  ________, /*|*/ ________, ________, ________
 ),
 
-/* LAYER_MEDIA
+/* LAYER_MOVEMENT
  *
  * ,----------------------------------.           ,----------------------------------.
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * |S-Tab |      |      |      |      |           | Home | PgDn | PgUp | End  | Ins  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * | Tab  |      |      |      |      |           | Left | Down |  Up  | Rght | Caps |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R | DEL  |
+ * `----------------------------------'           `----------------------------------'
+ *                  ,--------------------.    ,------,---------------.
+ *                  |     |       |      |    |      |       |       |
+ *                  `-------------|      |    |      |-------+-------.
+ *                                |      |    |      |
+ *                                `------'    `------'
+  */
+[LAYER_MOVEMENT] = KEYMAP(
+  LSFT(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      KC_INS,
+  KC_TAB,       XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_CAPS,
+  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_DEL,
+                                                         /*|*/
+                            ________, ________, ________,/*|*/ ________, ________, ________
+),
+
+/* LAYER_WINMGR
+ *
+ * ,----------------------------------.           ,----------------------------------.
+ * |RESET |P-Clr | V-Dn | V-Up | Mute |           | M-1  | M-2  | M-3  | M-4  | M-5  |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * |Lock  |Radio | Prev | Next | Play |           | M-6  | M-7  | M-8  | M-9  | M-0  |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * |      |      |      |      |      |           | M-Lt | M-Dn | M-Up | M-Rt |      |
+ * `----------------------------------'           `----------------------------------'
+ *                  ,--------------------.    ,------,---------------.
+ *                  |     |       |      |    |      |       |       |
+ *                  `-------------|      |    |      |-------+-------.
+ *                                |      |    |      |
+ *                                `------'    `------'
+ */
+[LAYER_WINMGR] = KEYMAP(
+  RESET,              LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    /*|*/ LGUI(KC_1),    LGUI(KC_2),    LGUI(KC_3),  LGUI(KC_4),     LGUI(KC_5),
+  LGUI(LALT(KC_L)),   LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /*|*/ LGUI(KC_6),    LGUI(KC_7),    LGUI(KC_8),  LGUI(KC_9),     LGUI(KC_0),
+  XXXXXXXX,           XXXXXXXX,         XXXXXXXX,            XXXXXXXX,            XXXXXXXX,            /*|*/ LGUI(KC_LEFT), LGUI(KC_DOWN), LGUI(KC_UP), LGUI(KC_RIGHT), XXXXXXXX,
+                                                                                                       /*|*/
+                                                                        ________, ________,  ________, /*|*/ ________, ________,  ________
+),
+
+/* LAYER_MOUSE
+ *
+ * ,----------------------------------.           ,----------------------------------.
+ * |      |      |      |      |      |           | ACL0 | ACL1 | ACL2 |      |      |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * |      |      |      |L-Clk |M-Clk |           | Left | Down |  Up  | Rght |R-Clk |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |      |      |      |      |      |           |      |      |      |      |      |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
- *                  | TAB | LAYER | BSpc |    | Space| LAYER | Enter |
+ *                  |     |       |      |    |      |       |       |
  *                  `-------------|      |    |      |-------+-------.
- *                                | Ctrl |    | Alt  |
+ *                                |      |    |      |
  *                                `------'    `------'
  */
-[LAYER_MEDIA] = KEYMAP(
-  KC_HOME,        LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),           LGUI(LSFT(KC_6)), KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_UP,       KC_MS_RIGHT,    KC_PGUP,
-  GUI_T(KC_END),  LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, SFT_T(KC_MEDIA_NEXT_TRACK), KC_MEDIA_PLAY_PAUSE, KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_UP,       KC_MS_RIGHT,    KC_PGUP,
-  KC_MS_ACCEL0,   KC_TRANSPARENT,   KC_MS_BTN3,          KC_MS_BTN1,                 KC_MS_BTN2,  KC_MS_WH_LEFT,  KC_MS_WH_DOWN,  KC_MS_WH_UP,    KC_MS_WH_RIGHT, KC_MS_ACCEL2,
-                             ___________, ___________,  ___________,         ___________, ___________,  ___________
+[LAYER_MOUSE] = KEYMAP(
+  XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_ACL0,  KC_ACL1,  KC_ACL2,  XXXXXXXX, XXXXXXXX,
+  XXXXXXXX, XXXXXXXX, XXXXXXXX, KC_BTN1,  KC_BTN2,  /*|*/ KC_MS_L,  KC_MS_D,  KC_MS_U,  KC_MS_R,  KC_BTN3,
+  XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX,
+                                                    /*|*/
+                      ________, ________, ________, /*|*/ ________, ________, ________
+),
+
+/* LAYER_DRAW
+ *
+ * ,----------------------------------.           ,----------------------------------.
+ * |On/Off|Clear |Toggle|      |      |           |      |      |      |      |      |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * | Undo |Erase |      |      |      |           |      |      |      |      |      |
+ * |------+------+------+------+------|           |------+------+------+------+------|
+ * | Pen1 | Pen2 | Pen3 | Pen4 | Pen5 |           |      |      |      |      |      |
+ * `----------------------------------'           `----------------------------------'
+ *                  ,--------------------.    ,------,---------------.
+ *                  |     |       |      |    |      |       |       |
+ *                  `-------------|      |    |      |-------+-------.
+ *                                |      |    |      |
+ *                                `------'    `------'
+ */
+[LAYER_DRAW] = KEYMAP(
+  KC_F9,     LSFT(KC_F9),    LCTL(KC_F9),  XXXXXXXX,       XXXXXXXX,         XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX,
+  KC_F10,    LALT(KC_LCTRL), XXXXXXXX,     XXXXXXXX,       XXXXXXXX,         XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX,
+  KC_LSHIFT, KC_LCTRL,       KC_LALT,      LSFT(KC_LCTRL), LSFT(KC_LALT),    XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX,
+
+                                            ________, ________, ________,    ________, ________, ________
 ),
 
 /* LAYER_BLANK
@@ -157,17 +226,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |           |      |      |      |      |      |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
- *                  | TAB | LAYER | BSpc |    | Space| LAYER | Enter |
+ *                  |     |       |      |    |      |       |       |
  *                  `-------------|      |    |      |-------+-------.
- *                                | Ctrl |    | Alt  |
+ *                                |      |    |      |
  *                                `------'    `------'
  */
 /*
 [LAYER_BLANK] = KEYMAP(
-  ___________, ___________,  ___________,  ___________, ___________,         ___________,  ___________, ___________, ___________, ___________,
-  ___________, ___________,  ___________,  ___________, ___________,         ___________,  ___________, ___________, ___________, ___________,
-  ___________, ___________,  ___________,  ___________, ___________,         ___________,  ___________, ___________, ___________, ___________,
-                             ___________, ___________,  ___________,         ___________, ___________,  ___________
+  ________, ________, ________, ________, ________,         ________, ________, ________, ________, ________,
+  ________, ________, ________, ________, ________,         ________, ________, ________, ________, ________,
+  ________, ________, ________, ________, ________,         ________, ________, ________, ________, ________,
+
+                      ________, ________, ________,         ________, ________, ________
 ),
  */
 };
@@ -197,30 +267,20 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
  */
 void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
   dance_layer_t *layers = (dance_layer_t *)user_data;
-  uint8_t layer = biton32(layer_state);
-  bool shift_is_on = get_mods() & (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT));
-
-  layer_clear();
-
-  // Test if layer locking is changing:
-  if (state->count == 1) {
-    g_layer_lock = g_layer_lock || shift_is_on;
-
-    if (layer != 0 && shift_is_on) {
-      g_layer_lock = false;
-      return;
-    }
-  }
 
   switch (state->count) {
   case 1:
+    g_layer_keys++;
     layer_on(layers->tap_layer_one);
     break;
 
   case 2:
+    layer_off(layers->tap_layer_one);
     layer_on(layers->tap_layer_two);
     break;
   }
+
+  update_tri_layer(LAYER_SYMB, LAYER_NUMBERS, LAYER_MOVEMENT);
 }
 
 /******************************************************************************/
@@ -228,63 +288,13 @@ void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
  * Reset function for `dance_layer_each'.
  */
 void dance_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->interrupted || !g_layer_lock) {
-    layer_clear();
-    g_layer_lock = false;
-  }
-}
-
-/******************************************************************************/
-/*
- * Tap Dance function that acts like `ACTION_TAP_DANCE_DOUBLE' but can
- * handle more than two keys/taps.
- */
-void dance_multitap_finish(qk_tap_dance_state_t *state, void *user_data) {
-  dance_multitap_t *keys = (dance_multitap_t *)user_data;
-
-  switch (state->count) {
-  case 1:
-    if (keys->tap_kc1) register_code16(keys->tap_kc1);
-    break;
-  case 2:
-    if (keys->tap_kc2) register_code16(keys->tap_kc2);
-    break;
-  case 3:
-    if (keys->tap_kc3) register_code16(keys->tap_kc3);
-    break;
-  }
-}
-
-/******************************************************************************/
-/*
- * Reset function for `dance_multitap_finish'.
- */
-void dance_multitap_reset(qk_tap_dance_state_t *state, void *user_data) {
-  dance_multitap_t *keys = (dance_multitap_t *)user_data;
-
-  switch (state->count) {
-  case 1:
-    if (keys->tap_kc1) unregister_code16(keys->tap_kc1);
-    break;
-  case 2:
-    if (keys->tap_kc2) unregister_code16(keys->tap_kc2);
-    break;
-  case 3:
-    if (keys->tap_kc3) unregister_code16(keys->tap_kc3);
-    break;
-  }
+  if (!state->pressed) g_layer_keys--;
+  if (g_layer_keys == 0) layer_clear();
+  update_tri_layer(LAYER_SYMB, LAYER_NUMBERS, LAYER_MOVEMENT);
 }
 
 /******************************************************************************/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-  case EPRM:
-    if (record->event.pressed) {
-      eeconfig_init();
-    }
-    return false;
-  }
-
   return true;
 }
 
@@ -297,29 +307,6 @@ void matrix_init_user(void) {
 /******************************************************************************/
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
-  /* uint8_t layer = biton32(layer_state); */
-
-  // Reset all the LEDs:
-  /* ergodox_led_all_off(); */
-  /*  */
-  /* if (g_usb_led & (1<<USB_LED_CAPS_LOCK)) { */
-  /*   // Caps lock light should be on: */
-  /*   ergodox_led_all_on(); */
-  /* } else { */
-  /*   switch (layer) { */
-  /*   case 1: */
-  /*     ergodox_right_led_1_on(); */
-  /*     break; */
-  /*   case 2: */
-  /*     ergodox_right_led_2_on(); */
-  /*     break; */
-  /*   case 3: */
-  /*     ergodox_right_led_3_on(); */
-  /*     break; */
-  /*   default: */
-  /*     break; */
-  /*   } */
-  /* } */
 };
 
 /******************************************************************************/
@@ -334,41 +321,25 @@ const uint16_t PROGMEM fn_actions[] = {
 
 /******************************************************************************/
 qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_TAB_OR_ALTSPC] = {
-    .fn = { NULL, dance_multitap_finish, dance_multitap_reset },
-    .user_data = (void *)&((dance_multitap_t) { KC_TAB
-          , LALT(KC_SPACE)
-          , LCTL(LALT(KC_SPACE))
-          })
-  },
-
-  [TD_SYMB_OR_NUMBERS] = {
+  [TD_SYMB_OR_MOUSE] = {
     .fn = { dance_layer_each, NULL, dance_layer_reset},
     .user_data = (void *)&((dance_layer_t) { LAYER_SYMB
-          , LAYER_NUMBERS
-          , false
-          })
+                                           , LAYER_MOUSE
+                                           , false
+                                           })
   },
 
-  [TD_NUMBERS_OR_MEDIA] = {
+  [TD_NUMBERS_OR_WINMGR] = {
     .fn = { dance_layer_each, NULL, dance_layer_reset},
     .user_data = (void *)&((dance_layer_t) { LAYER_NUMBERS
-          , LAYER_MEDIA
-          , false
-          })
+                                           , LAYER_WINMGR
+                                           , false
+                                           })
   },
 
-  [TD_PAREN]    = ACTION_TAP_DANCE_DOUBLE(KC_LPRN,      KC_RPRN),
-  [TD_CURLY]    = ACTION_TAP_DANCE_DOUBLE(KC_LCBR,      KC_RCBR),
-  [TD_SQUARE]   = ACTION_TAP_DANCE_DOUBLE(KC_LBRACKET,  KC_RBRACKET),
-  [TD_ANGLE]    = ACTION_TAP_DANCE_DOUBLE(KC_LABK,      KC_RABK),
-  [TD_ESC_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_ESCAPE,    KC_CAPSLOCK),
-
-  [TD_QUOTE] = {
-    .fn = { NULL, dance_multitap_finish, dance_multitap_reset },
-    .user_data = (void *)&((dance_multitap_t) { KC_QUOTE
-          , KC_DOUBLE_QUOTE
-          , KC_GRAVE
-          })
-  }
+  [TD_PAREN]    = ACTION_TAP_DANCE_DOUBLE(KC_LPRN,     KC_RPRN),
+  [TD_CURLY]    = ACTION_TAP_DANCE_DOUBLE(KC_LCBR,     KC_RCBR),
+  [TD_SQUARE]   = ACTION_TAP_DANCE_DOUBLE(KC_LBRACKET, KC_RBRACKET),
+  [TD_ANGLE]    = ACTION_TAP_DANCE_DOUBLE(KC_LABK,     KC_RABK),
+  [TD_QUOTE]    = ACTION_TAP_DANCE_DOUBLE(KC_QUOTE,    KC_DOUBLE_QUOTE),
 };
