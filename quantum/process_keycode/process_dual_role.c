@@ -18,7 +18,7 @@
 static qk_dual_role_state_t dual_role_state = {0, 0, 0, false};
 
 // An existing dual role was interrupted.
-static inline void dual_role_interrupted(uint16_t keycode) {
+static inline void dual_role_interrupted(void) {
   qk_dual_role_action_t *action;
   dual_role_state.interrupted = true;
 
@@ -26,16 +26,15 @@ static inline void dual_role_interrupted(uint16_t keycode) {
     action = &dual_role_keys[i];
     if (action->active) register_mods(action->mod);
   }
-
-  register_code(keycode);
 }
 
 // Start tracking a dual role key.
-static inline void dual_role_start(qk_dual_role_action_t *action, keyrecord_t *record) {
+static inline void dual_role_start(qk_dual_role_action_t *action) {
   if (dual_role_state.count && dual_role_state.interrupted) {
     // There is already an active modifier that has been interrupted.
     // Therefore this key will act like a normal, non-dual-role key.
-    dual_role_interrupted(action->key);
+    dual_role_interrupted();
+    register_code(action->key);
     return;
   }
 
@@ -49,7 +48,7 @@ static inline void dual_role_start(qk_dual_role_action_t *action, keyrecord_t *r
 }
 
 // The dual role should end now.
-static inline void dual_role_end(qk_dual_role_action_t *action, keyrecord_t *record) {
+static inline void dual_role_end(qk_dual_role_action_t *action) {
   if (!action->active) {
     // This key was acting like a normal key.
     unregister_code(action->key);
@@ -69,7 +68,8 @@ static inline void dual_role_end(qk_dual_role_action_t *action, keyrecord_t *rec
       !dual_role_state.interrupted &&
       timer_elapsed(dual_role_state.timer) < TAPPING_TERM)
   {
-    dual_role_interrupted(action->key);
+    dual_role_interrupted();
+    register_code(action->key);
     unregister_code(action->key);
   } else if (!dual_role_state.count &&
              !dual_role_state.interrupted &&
@@ -95,18 +95,16 @@ bool process_dual_role(uint16_t keycode, keyrecord_t *record) {
 
     if (record->event.pressed) {
       if (index > dual_role_state.max) dual_role_state.max = index;
-      dual_role_start(action, record);
+      dual_role_start(action);
     } else {
-      dual_role_end(action, record);
+      dual_role_end(action);
     }
 
     return false;
 
   default:
-    if (record->event.pressed && dual_role_state.count) {
-      dual_role_interrupted(keycode);
-      return false;
-    }
+    if (record->event.pressed && dual_role_state.count)
+      dual_role_interrupted();
   }
 
   return true;
