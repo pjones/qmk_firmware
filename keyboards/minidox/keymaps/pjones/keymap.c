@@ -50,7 +50,7 @@ enum {
 #define JUST_1_SPC  LCTL(LALT(KC_SPACE))
 #define LAYER_LEFT  TD(TD_SYMB_OR_MOUSE)
 #define LAYER_RIGHT TD(TD_NUMBERS_OR_WINMGR)
-#define DRAW_KEY    LT(LAYER_DRAW, KC_NO)
+#define DRAW_KEY    LT(LAYER_DRAW, KC_TAB)
 
 /******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -60,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,----------------------------------.           ,----------------------------------.
  * |   Q  |   W  |   E  |   R  |   T  |           |   Y  |   U  |   I  |   O  |   P  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |   A  |   S  |   D  |   F  |   G  |           |   H  |   J  |   K  |   L  |Enter |
+ * |   A  |   S  |   D  |   F  |   G  |           |   H  |   J  |   K  |   L  |   ;  |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |   Z  |   X  |   C  |   V  |   B  |           |   N  |   M  |   ,  |   .  |   /  |
  * `----------------------------------'           `----------------------------------'
@@ -72,7 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [LAYER_BASE] = KEYMAP(
   KC_Q,        KC_W,   KC_E,  KC_R,        KC_T, /*|*/ KC_Y,  KC_U,         KC_I,    KC_O,    KC_P,
-  GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G, /*|*/ KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_ENT),
+  GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G, /*|*/ KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_SCLN),
   KC_Z,        KC_X,   KC_C,  KC_V,        KC_B, /*|*/ KC_N,  KC_M,         KC_COMM, KC_DOT,  KC_SLSH,
                                                  /*|*/
          DRAW_KEY, LAYER_LEFT, CTL_T(KC_BSPACE), /*|*/ ALT_T(KC_SPACE), LAYER_RIGHT, KC_ENTER
@@ -85,7 +85,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |  !   |  @   |  #   |  $   |  %   |           |   ^  |   &  |  *   | (  ) | '  " |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * | ESC  |      | J1S  |  ~   |AltGR |           |  :   |  ;   |      |Font +|Font -|
+ * | J1S  |      |      |  ~   |AltGR |           |Font +|Font -|      | <  > |      |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -94,11 +94,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
  */
 [LAYER_SYMB] = KEYMAP(
-  KC_BSLASH, KC_GRAVE,  KC_PIPE,    KC_PLUS, KC_EQUAL,   /*|*/ KC_UNDS,  KC_MINUS, TD(TD_ANGLE), TD(TD_CURLY),    TD(TD_SQUARE),
-  KC_EXLM,   KC_AT,     KC_HASH,    KC_DLR,  KC_PERCENT, /*|*/ KC_CIRC,  KC_AMPR,  KC_ASTR,      TD(TD_PAREN),    TD(TD_QUOTE),
-  KC_ESC,    KC_DELETE, JUST_1_SPC, KC_TILD, KC_RALT,    /*|*/ KC_COLON, KC_SCLN,  XXXXXXXX,     M(M_EMACS_PLUS), M(M_EMACS_MINU),
-                                                         /*|*/
-                         ________, ________, ________,   /*|*/ ________, ________, ________
+  KC_BSLASH,  KC_GRAVE, KC_PIPE,  KC_PLUS, KC_EQUAL,   /*|*/ KC_UNDS,         KC_MINUS,        TD(TD_ANGLE), TD(TD_CURLY),    TD(TD_SQUARE),
+  KC_EXLM,    KC_AT,    KC_HASH,  KC_DLR,  KC_PERCENT, /*|*/ KC_CIRC,         KC_AMPR,         KC_ASTR,      TD(TD_PAREN),    TD(TD_QUOTE),
+  JUST_1_SPC, XXXXXXXX, XXXXXXXX, KC_TILD, KC_RALT,    /*|*/ M(M_EMACS_PLUS), M(M_EMACS_MINU), XXXXXXXX,     TD(TD_ANGLE),    XXXXXXXX,
+                                                       /*|*/
+                       ________, ________, ________,   /*|*/ ________, ________, ________
 ),
 
 /* LAYER_NUMBERS
@@ -127,11 +127,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* LAYER_MOVEMENT
  *
  * ,----------------------------------.           ,----------------------------------.
- * |S-Tab |      |      |      |      |           | Home | PgDn | PgUp | End  | Ins  |
+ * |S-Tab |      |      |S-Ins | Ins  |           | Home | PgDn | PgUp | End  |M-Ent |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * | Tab  |      |      |      |      |           | Left | Down |  Up  | Rght | Caps |
+ * | Tab  |      | DEL  | Esc  | Caps |           | Left | Down |  Up  | Rght | Ent  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R | DEL  |
+ * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R |C-Ent |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -140,11 +140,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
   */
 [LAYER_MOVEMENT] = KEYMAP(
-  LSFT(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      KC_INS,
-  KC_TAB,       XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_CAPS,
-  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_DEL,
-                                                         /*|*/
-                            ________, ________, ________,/*|*/ ________, ________, ________
+  LSFT(KC_TAB), XXXXXXXX,  XXXXXXXX, LSFT(KC_INS), KC_INS,   /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      LALT(KC_ENT),
+  KC_TAB,       XXXXXXXX,  KC_DEL,   KC_ESC,       KC_CAPS,  /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_ENT,
+  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX,     XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, LCTL(KC_ENT),
+                                                             /*|*/
+                                ________, ________, ________,/*|*/ ________, ________, ________
 ),
 
 /* LAYER_WINMGR
