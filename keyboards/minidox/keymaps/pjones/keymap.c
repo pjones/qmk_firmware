@@ -30,6 +30,14 @@ enum {
 
 /******************************************************************************/
 enum {
+  DR_F = 0,
+  DR_J,
+  DR_BSPACE,
+  DR_SPACE
+};
+
+/******************************************************************************/
+enum {
   TD_SYMB_OR_MOUSE = 0,
   TD_NUMBERS_OR_WINMGR,
   TD_PAREN,
@@ -344,6 +352,14 @@ void led_set_kb(uint8_t usb_led) {
 /******************************************************************************/
 const uint16_t PROGMEM fn_actions[] = {
   [1] = ACTION_LAYER_TAP_TOGGLE(LAYER_SYMB) // FN1 - Momentary Layer 1 (Symbols)
+};
+
+/******************************************************************************/
+qk_dual_role_action_t dual_role_keys[] = {
+  [DR_F]      = DUAL_ROLE(MOD_LSFT, KC_F),
+  [DR_J]      = DUAL_ROLE(MOD_LSFT, KC_J),
+  [DR_BSPACE] = DUAL_ROLE(MOD_LCTL, KC_BSPACE),
+  [DR_SPACE]  = DUAL_ROLE(MOD_LALT, KC_SPACE)
 };
 
 /******************************************************************************/

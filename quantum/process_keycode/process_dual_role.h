@@ -23,9 +23,9 @@
 
 typedef struct
 {
-  uint16_t index;
   uint16_t timer;
-  bool     active;
+  uint8_t  count;
+  uint8_t  max;
   bool     interrupted;
 } qk_dual_role_state_t;
 
@@ -33,11 +33,12 @@ typedef struct
 {
   uint16_t mod;
   uint16_t key;
-} qk_dual_role_pair_t;
+  bool     active;
+} qk_dual_role_action_t;
 
 #define DR(n) (QK_DUAL_ROLE + n)
-#define DUAL_ROLE(mod, key) {mod, key}
-extern qk_dual_role_pair_t dual_role_keys[];
+#define DUAL_ROLE(mod, key) {mod, key, false}
+extern qk_dual_role_action_t dual_role_keys[];
 
 /* To be used internally */
 bool process_dual_role(uint16_t keycode, keyrecord_t *record);
