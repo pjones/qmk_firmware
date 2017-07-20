@@ -42,7 +42,8 @@ enum {
 /******************************************************************************/
 enum {
   M_EMACS_PLUS = 0,
-  M_EMACS_MINU
+  M_EMACS_MINU,
+  M_PASSWD
 };
 
 /******************************************************************************/
@@ -51,8 +52,9 @@ enum {
 #define JUST_1_SPC     LCTL(LALT(KC_SPACE))
 #define LAYER_LEFT     TD(TD_SYMB_OR_MOUSE)
 #define LAYER_RIGHT    TD(TD_NUMBERS_OR_WINMGR)
-#define DRAW_KEY       LT(LAYER_DRAW, KC_TAB)
+#define DRAW_KEY       LT(LAYER_DRAW, KC_NO)
 #define LAYER_TAP_TERM 120
+#define BIG_TERMINAL   LGUI(LALT(KC_ENTER))
 
 /******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -77,7 +79,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G, /*|*/ KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_SCLN),
   KC_Z,        KC_X,   KC_C,  KC_V,        KC_B, /*|*/ KC_N,  KC_M,         KC_COMM, KC_DOT,  KC_SLSH,
                                                  /*|*/
-         DRAW_KEY, LAYER_LEFT, CTL_T(KC_BSPACE), /*|*/ ALT_T(KC_SPACE), LAYER_RIGHT, KC_ENTER
+         DRAW_KEY, LAYER_LEFT, CTL_T(KC_BSPACE), /*|*/ ALT_T(KC_SPACE), LAYER_RIGHT, M(M_PASSWD)
 ),
 
 /* LAYER_SYMB
@@ -129,11 +131,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* LAYER_MOVEMENT
  *
  * ,----------------------------------.           ,----------------------------------.
- * |S-Tab |      |      |S-Ins | Ins  |           | Home | PgDn | PgUp | End  |M-Ent |
+ * |      |      |      |S-Ins | Ins  |           | Home | PgDn | PgUp | End  |      |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * | Tab  |      | DEL  | Esc  | Caps |           | Left | Down |  Up  | Rght | Ent  |
+ * | Esc  |      | DEL  |      |      |           | Left | Down |  Up  | Rght | Caps |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R |C-Ent |
+ * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R |M-Ent |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -142,9 +144,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
   */
 [LAYER_MOVEMENT] = KEYMAP(
-  LSFT(KC_TAB), XXXXXXXX,  XXXXXXXX, LSFT(KC_INS), KC_INS,   /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      LALT(KC_ENT),
-  KC_TAB,       XXXXXXXX,  KC_DEL,   KC_ESC,       KC_CAPS,  /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_ENT,
-  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX,     XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, LCTL(KC_ENT),
+  XXXXXXXX,     XXXXXXXX,  XXXXXXXX, LSFT(KC_INS), KC_INS,   /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      XXXXXXXX,
+  KC_ESC,       XXXXXXXX,  KC_DEL,   XXXXXXXX,     XXXXXXXX, /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_CAPS,
+  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX,     XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, LALT(KC_ENT),
                                                              /*|*/
                                 ________, ________, ________,/*|*/ ________, ________, ________
 ),
@@ -156,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |Lock  |Radio | Prev | Next | Play |           | M-6  | M-7  | M-8  | M-9  | M-0  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           | M-Lt | M-Dn | M-Up | M-Rt |      |
+ * |      |      |      |      |      |           | M-Lt | M-Dn | M-Up | M-Rt |BTerm |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -167,7 +169,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [LAYER_WINMGR] = KEYMAP(
   RESET,              LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    /*|*/ LGUI(KC_1),    LGUI(KC_2),    LGUI(KC_3),  LGUI(KC_4),     LGUI(KC_5),
   LGUI(LALT(KC_L)),   LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /*|*/ LGUI(KC_6),    LGUI(KC_7),    LGUI(KC_8),  LGUI(KC_9),     LGUI(KC_0),
-  XXXXXXXX,           XXXXXXXX,         XXXXXXXX,            XXXXXXXX,            XXXXXXXX,            /*|*/ LGUI(KC_LEFT), LGUI(KC_DOWN), LGUI(KC_UP), LGUI(KC_RIGHT), XXXXXXXX,
+  XXXXXXXX,           XXXXXXXX,         XXXXXXXX,            XXXXXXXX,            XXXXXXXX,            /*|*/ LGUI(KC_LEFT), LGUI(KC_DOWN), LGUI(KC_UP), LGUI(KC_RIGHT), BIG_TERMINAL,
                                                                                                        /*|*/
                                                                         ________, ________,  ________, /*|*/ ________, ________,  ________
 ),
@@ -252,6 +254,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
     return MACRODOWN(D(LCTL), T(X), T(EQUAL), T(G), U(LCTL), END);
   case M_EMACS_MINU:
     return MACRODOWN(D(LCTL), T(X), T(MINUS), T(G), U(LCTL), END);
+  case M_PASSWD:
+    return MACRODOWN(D(LGUI), T(SLSH), T(P), U(LGUI), END);
   };
 
   return MACRO_NONE;
