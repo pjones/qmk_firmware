@@ -30,8 +30,10 @@ enum {
 
 /******************************************************************************/
 enum {
-  DR_F = 0,
+  DR_A  = 0,
+  DR_F,
   DR_J,
+  DR_SCLN,
   DR_BSPACE,
   DR_SPACE
 };
@@ -356,8 +358,10 @@ const uint16_t PROGMEM fn_actions[] = {
 
 /******************************************************************************/
 qk_dual_role_action_t dual_role_keys[] = {
+  [DR_A]      = DUAL_ROLE(MOD_LGUI, KC_A),
   [DR_F]      = DUAL_ROLE(MOD_LSFT, KC_F),
   [DR_J]      = DUAL_ROLE(MOD_LSFT, KC_J),
+  [DR_SCLN]   = DUAL_ROLE(MOD_LGUI, KC_SCLN),
   [DR_BSPACE] = DUAL_ROLE(MOD_LCTL, KC_BSPACE),
   [DR_SPACE]  = DUAL_ROLE(MOD_LALT, KC_SPACE)
 };
