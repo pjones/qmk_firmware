@@ -57,6 +57,15 @@ enum {
 #define BIG_TERMINAL   LGUI(LALT(KC_ENTER))
 
 /******************************************************************************/
+// Dual-keys (modifiers and normal key codes):
+#define S__F           SFT_T(KC_F)
+#define S__J           SFT_T(KC_J)
+#define G__A           GUI_T(KC_A)
+#define G__SCLN        GUI_T(KC_SCLN)
+#define C__BSPACE      CTL_T(KC_BSPACE)
+#define A__SPACE       ALT_T(KC_SPACE)
+
+/******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* LAYER_BASE
@@ -75,11 +84,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
  */
 [LAYER_BASE] = KEYMAP(
-  KC_Q,        KC_W,   KC_E,  KC_R,        KC_T, /*|*/ KC_Y,  KC_U,         KC_I,    KC_O,    KC_P,
-  GUI_T(KC_A), KC_S,   KC_D,  SFT_T(KC_F), KC_G, /*|*/ KC_H,  SFT_T(KC_J),  KC_K,    KC_L,    GUI_T(KC_SCLN),
-  KC_Z,        KC_X,   KC_C,  KC_V,        KC_B, /*|*/ KC_N,  KC_M,         KC_COMM, KC_DOT,  KC_SLSH,
-                                                 /*|*/
-         DRAW_KEY, LAYER_LEFT, CTL_T(KC_BSPACE), /*|*/ ALT_T(KC_SPACE), LAYER_RIGHT, M(M_PASSWD)
+    KC_Q, KC_W, KC_E, KC_R, KC_T, /*|*/ KC_Y, KC_U, KC_I,    KC_O,   KC_P,
+    G__A, KC_S, KC_D, S__F, KC_G, /*|*/ KC_H, S__J, KC_K,    KC_L,   G__SCLN,
+    KC_Z, KC_X, KC_C, KC_V, KC_B, /*|*/ KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
+                                  /*|*/
+ DRAW_KEY, LAYER_LEFT, C__BSPACE, /*|*/ A__SPACE, LAYER_RIGHT, M(M_PASSWD)
 ),
 
 /* LAYER_SYMB
