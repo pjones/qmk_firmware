@@ -70,12 +70,12 @@ enum {
 
 /******************************************************************************/
 // Dual-keys (modifiers and normal key codes):
-#define S__F           SFT_T(KC_F)
-#define S__J           SFT_T(KC_J)
+#define S__F           DR(DR_F)
+#define S__J           DR(DR_J)
 #define G__A           GUI_T(KC_A)
 #define G__SCLN        GUI_T(KC_SCLN)
-#define C__BSPACE      CTL_T(KC_BSPACE)
-#define A__SPACE       ALT_T(KC_SPACE)
+#define C__BSPACE      DR(DR_BSPACE)
+#define A__SPACE       DR(DR_SPACE)
 
 /******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
