@@ -7,8 +7,9 @@ static uint8_t g_layer_keys = 0;
 
 /******************************************************************************/
 typedef struct {
-  uint8_t tap_layer_one;
-  uint8_t tap_layer_two;
+  uint8_t  tap_layer_one;       // Tapping once goes to this layer.
+  uint8_t  tap_layer_two;       // Second tap turns this layer on.
+  uint16_t tap_layer_key;       // If a layer wasn't used, send this key.
 } dance_layer_t;
 
 /******************************************************************************/
@@ -45,12 +46,13 @@ enum {
 };
 
 /******************************************************************************/
-#define ________    KC_TRANSPARENT
-#define XXXXXXXX    KC_NO
-#define JUST_1_SPC  LCTL(LALT(KC_SPACE))
-#define LAYER_LEFT  TD(TD_SYMB_OR_MOUSE)
-#define LAYER_RIGHT TD(TD_NUMBERS_OR_WINMGR)
-#define DRAW_KEY    LT(LAYER_DRAW, KC_TAB)
+#define ________       KC_TRANSPARENT
+#define XXXXXXXX       KC_NO
+#define JUST_1_SPC     LCTL(LALT(KC_SPACE))
+#define LAYER_LEFT     TD(TD_SYMB_OR_MOUSE)
+#define LAYER_RIGHT    TD(TD_NUMBERS_OR_WINMGR)
+#define DRAW_KEY       LT(LAYER_DRAW, KC_TAB)
+#define LAYER_TAP_TERM 120
 
 /******************************************************************************/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -258,12 +260,9 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 /******************************************************************************/
 /*
  * Tap Dance function that allows a single key to switch to multiple
- * layers.  It acts like the tap-toggle (TT) key in QMK except it can
- * work with more than one layer.
- *
- * If a layer is active then tapping the once will turn all layers
- * off.  Otherwise tap or tap and hold as many times as you want to
- * get to the desired layer.
+ * layers and at the same time potentially send a normal key.  It's
+ * like the LT layer switch, but allows multiple taps to select the
+ * desired layer.
  */
 void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
   dance_layer_t *layers = (dance_layer_t *)user_data;
@@ -288,9 +287,22 @@ void dance_layer_each(qk_tap_dance_state_t *state, void *user_data) {
  * Reset function for `dance_layer_each'.
  */
 void dance_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
+  dance_layer_t *layers = (dance_layer_t *)user_data;
+
+  // Deactivate the key's layer:
   if (!state->pressed) g_layer_keys--;
   if (g_layer_keys == 0) layer_clear();
   update_tri_layer(LAYER_SYMB, LAYER_NUMBERS, LAYER_MOVEMENT);
+
+  // If the key wasn't used to trigger a layer, use it as a normal key:
+  if (g_layer_keys == 0 && !state->interrupted &&
+      timer_elapsed(state->timer) <= (LAYER_TAP_TERM + 50))
+  {
+    for (uint8_t i=0; i < state->count; i++) {
+      register_code(layers->tap_layer_key);
+      unregister_code(layers->tap_layer_key);
+    }
+  }
 }
 
 /******************************************************************************/
@@ -323,17 +335,19 @@ const uint16_t PROGMEM fn_actions[] = {
 qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_SYMB_OR_MOUSE] = {
     .fn = { dance_layer_each, NULL, dance_layer_reset},
+    .custom_tapping_term = LAYER_TAP_TERM,
     .user_data = (void *)&((dance_layer_t) { LAYER_SYMB
                                            , LAYER_MOUSE
-                                           , false
+                                           , KC_TAB
                                            })
   },
 
   [TD_NUMBERS_OR_WINMGR] = {
     .fn = { dance_layer_each, NULL, dance_layer_reset},
+    .custom_tapping_term = LAYER_TAP_TERM,
     .user_data = (void *)&((dance_layer_t) { LAYER_NUMBERS
                                            , LAYER_WINMGR
-                                           , false
+                                           , KC_ENTER
                                            })
   },
 
