@@ -43,7 +43,9 @@ enum {
 enum {
   M_EMACS_PLUS = 0,
   M_EMACS_MINU,
-  M_PASSWD
+  M_PASSWD,
+  M_TODO,
+  M_CALC
 };
 
 /******************************************************************************/
@@ -94,11 +96,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* LAYER_SYMB
  *
  * ,----------------------------------.           ,----------------------------------.
- * |  \   |  `   |  |   |  +   |  =   |           |   _  |   -  | <  > | {  } | [  ] |
+ * |  \   |  `   |  |   |  +   |  =   |           |   _  |   -  |  ~   | {  } | [  ] |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |  !   |  @   |  #   |  $   |  %   |           |   ^  |   &  |  *   | (  ) | '  " |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * | J1S  |      |      |  ~   |AltGR |           |Font +|Font -|      | <  > |      |
+ * | J1S  |      |      |      |AltGR |           |Font +|Font -|      | <  > |      |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -107,11 +109,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
  */
 [LAYER_SYMB] = KEYMAP(
-  KC_BSLASH,  KC_GRAVE, KC_PIPE,  KC_PLUS, KC_EQUAL,   /*|*/ KC_UNDS,         KC_MINUS,        TD(TD_ANGLE), TD(TD_CURLY),    TD(TD_SQUARE),
-  KC_EXLM,    KC_AT,    KC_HASH,  KC_DLR,  KC_PERCENT, /*|*/ KC_CIRC,         KC_AMPR,         KC_ASTR,      TD(TD_PAREN),    TD(TD_QUOTE),
-  JUST_1_SPC, XXXXXXXX, XXXXXXXX, KC_TILD, KC_RALT,    /*|*/ M(M_EMACS_PLUS), M(M_EMACS_MINU), XXXXXXXX,     TD(TD_ANGLE),    XXXXXXXX,
-                                                       /*|*/
-                       ________, ________, ________,   /*|*/ ________, ________, ________
+  KC_BSLASH,  KC_GRAVE, KC_PIPE,  KC_PLUS,  KC_EQUAL,   /*|*/ KC_UNDS,         KC_MINUS,        KC_TILD,  TD(TD_CURLY), TD(TD_SQUARE),
+  KC_EXLM,    KC_AT,    KC_HASH,  KC_DLR,   KC_PERCENT, /*|*/ KC_CIRC,         KC_AMPR,         KC_ASTR,  TD(TD_PAREN), TD(TD_QUOTE),
+  JUST_1_SPC, XXXXXXXX, XXXXXXXX, XXXXXXXX, KC_RALT,    /*|*/ M(M_EMACS_PLUS), M(M_EMACS_MINU), XXXXXXXX, TD(TD_ANGLE), XXXXXXXX,
+                                                        /*|*/
+                        ________, ________, ________,   /*|*/ ________, ________, ________
 ),
 
 /* LAYER_NUMBERS
@@ -140,11 +142,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* LAYER_MOVEMENT
  *
  * ,----------------------------------.           ,----------------------------------.
- * |      |      |      |S-Ins | Ins  |           | Home | PgDn | PgUp | End  |      |
+ * |RESET |      |      |S-Ins | Ins  |           | Home | PgDn | PgUp | End  |      |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * | Esc  |      | DEL  |      |      |           | Left | Down |  Up  | Rght | Caps |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |C-Tab |      |      |      |      |           | Ms-L | Ms-D | Ms-U | Ms-R |M-Ent |
+ * |C-Tab |      |      |      |      |           | MS-L | MS-D | MS-U | MS-R |M-Ent |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -153,9 +155,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
   */
 [LAYER_MOVEMENT] = KEYMAP(
-  XXXXXXXX,     XXXXXXXX,  XXXXXXXX, LSFT(KC_INS), KC_INS,   /*|*/ KC_HOME,    KC_PGDN,    KC_PGUP,  KC_END,      XXXXXXXX,
-  KC_ESC,       XXXXXXXX,  KC_DEL,   XXXXXXXX,     XXXXXXXX, /*|*/ KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,    KC_CAPS,
-  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX,     XXXXXXXX, /*|*/ KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, LALT(KC_ENT),
+  RESET,        XXXXXXXX,  XXXXXXXX, LSFT(KC_INS), KC_INS,   /*|*/ KC_HOME, KC_PGDN, KC_PGUP, KC_END,   XXXXXXXX,
+  KC_ESC,       XXXXXXXX,  KC_DEL,   XXXXXXXX,     XXXXXXXX, /*|*/ KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, KC_CAPS,
+  LCTL(KC_TAB), XXXXXXXX,  XXXXXXXX, XXXXXXXX,     XXXXXXXX, /*|*/ KC_WH_L, KC_WH_D, KC_WH_U, KC_WH_R,  LALT(KC_ENT),
                                                              /*|*/
                                 ________, ________, ________,/*|*/ ________, ________, ________
 ),
@@ -163,11 +165,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* LAYER_WINMGR
  *
  * ,----------------------------------.           ,----------------------------------.
- * |RESET |P-Clr | V-Dn | V-Up | Mute |           | M-1  | M-2  | M-3  | M-4  | M-5  |
+ * |      |P-Clr | V-Dn | V-Up | Mute |           | M-1  | M-2  | M-3  | M-4  | M-5  |
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |Lock  |Radio | Prev | Next | Play |           | M-6  | M-7  | M-8  | M-9  | M-0  |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           | M-Lt | M-Dn | M-Up | M-Rt |BTerm |
+ * |      |      |      | Todo | Calc |           | M-Lt | M-Dn | M-Up | M-Rt |BTerm |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -176,9 +178,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
  */
 [LAYER_WINMGR] = KEYMAP(
-  RESET,              LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    /*|*/ LGUI(KC_1),    LGUI(KC_2),    LGUI(KC_3),  LGUI(KC_4),     LGUI(KC_5),
+  XXXXXXXX,           LGUI(LSFT(KC_5)), LGUI(LSFT(KC_7)),    LGUI(LSFT(KC_8)),    LGUI(LSFT(KC_6)),    /*|*/ LGUI(KC_1),    LGUI(KC_2),    LGUI(KC_3),  LGUI(KC_4),     LGUI(KC_5),
   LGUI(LALT(KC_L)),   LGUI(LSFT(KC_4)), KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, KC_MEDIA_PLAY_PAUSE, /*|*/ LGUI(KC_6),    LGUI(KC_7),    LGUI(KC_8),  LGUI(KC_9),     LGUI(KC_0),
-  XXXXXXXX,           XXXXXXXX,         XXXXXXXX,            XXXXXXXX,            XXXXXXXX,            /*|*/ LGUI(KC_LEFT), LGUI(KC_DOWN), LGUI(KC_UP), LGUI(KC_RIGHT), BIG_TERMINAL,
+  XXXXXXXX,           XXXXXXXX,         XXXXXXXX,            M(M_TODO),           M(M_CALC),           /*|*/ LGUI(KC_LEFT), LGUI(KC_DOWN), LGUI(KC_UP), LGUI(KC_RIGHT), BIG_TERMINAL,
                                                                                                        /*|*/
                                                                         ________, ________,  ________, /*|*/ ________, ________,  ________
 ),
@@ -190,7 +192,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------|           |------+------+------+------+------|
  * |      |      |      |L-Clk |M-Clk |           | Left | Down |  Up  | Rght |R-Clk |
  * |------+------+------+------+------|           |------+------+------+------+------|
- * |      |      |      |      |      |           |      |      |      |      |      |
+ * |      |      |      |      |      |           | MS-L | MS-D | MS-U | MS-R |      |
  * `----------------------------------'           `----------------------------------'
  *                  ,--------------------.    ,------,---------------.
  *                  |     |       |      |    |      |       |       |
@@ -201,7 +203,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [LAYER_MOUSE] = KEYMAP(
   XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_ACL0,  KC_ACL1,  KC_ACL2,  XXXXXXXX, XXXXXXXX,
   XXXXXXXX, XXXXXXXX, XXXXXXXX, KC_BTN1,  KC_BTN2,  /*|*/ KC_MS_L,  KC_MS_D,  KC_MS_U,  KC_MS_R,  KC_BTN3,
-  XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX,
+  XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, XXXXXXXX, /*|*/ KC_WH_L,  KC_WH_D,  KC_WH_U,  KC_WH_R,  XXXXXXXX,
                                                     /*|*/
                       ________, ________, ________, /*|*/ ________, ________, ________
 ),
@@ -265,6 +267,10 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
     return MACRODOWN(D(LCTL), T(X), T(MINUS), T(G), U(LCTL), END);
   case M_PASSWD:
     return MACRODOWN(D(LGUI), T(SLSH), T(P), U(LGUI), END);
+  case M_TODO:
+    return MACRODOWN(D(LGUI), T(SLSH), T(T), U(LGUI), END);
+  case M_CALC:
+    return MACRODOWN(D(LGUI), T(SLSH), T(C), U(LGUI), END);
   };
 
   return MACRO_NONE;
