@@ -41,9 +41,7 @@ enum {
 
 /******************************************************************************/
 enum {
-  M_EMACS_PLUS = 0,
-  M_EMACS_MINU,
-  M_PASSWD,
+  M_PASSWD = 0,
   M_TODO,
   M_CALC
 };
@@ -57,6 +55,8 @@ enum {
 #define DRAW_KEY       LT(LAYER_DRAW, KC_NO)
 #define LAYER_TAP_TERM 120
 #define BIG_TERMINAL   LGUI(LALT(KC_ENTER))
+#define FONT_PLUS      LCTL(KC_PLUS)
+#define FONT_MINUS     LCTL(KC_MINUS)
 
 /******************************************************************************/
 // Dual-keys (modifiers and normal key codes):
@@ -109,9 +109,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                `------'    `------'
  */
 [LAYER_SYMB] = KEYMAP(
-  KC_BSLASH,  KC_GRAVE, KC_PIPE,  KC_PLUS,  KC_EQUAL,   /*|*/ KC_UNDS,         KC_MINUS,        KC_TILD,  TD(TD_CURLY), TD(TD_SQUARE),
-  KC_EXLM,    KC_AT,    KC_HASH,  KC_DLR,   KC_PERCENT, /*|*/ KC_CIRC,         KC_AMPR,         KC_ASTR,  TD(TD_PAREN), TD(TD_QUOTE),
-  JUST_1_SPC, XXXXXXXX, XXXXXXXX, XXXXXXXX, KC_RALT,    /*|*/ M(M_EMACS_PLUS), M(M_EMACS_MINU), XXXXXXXX, TD(TD_ANGLE), XXXXXXXX,
+  KC_BSLASH,  KC_GRAVE, KC_PIPE,  KC_PLUS,  KC_EQUAL,   /*|*/ KC_UNDS,   KC_MINUS,   KC_TILD,  TD(TD_CURLY), TD(TD_SQUARE),
+  KC_EXLM,    KC_AT,    KC_HASH,  KC_DLR,   KC_PERCENT, /*|*/ KC_CIRC,   KC_AMPR,    KC_ASTR,  TD(TD_PAREN), TD(TD_QUOTE),
+  JUST_1_SPC, XXXXXXXX, XXXXXXXX, XXXXXXXX, KC_RALT,    /*|*/ FONT_PLUS, FONT_MINUS, XXXXXXXX, TD(TD_ANGLE), XXXXXXXX,
                                                         /*|*/
                         ________, ________, ________,   /*|*/ ________, ________, ________
 ),
@@ -261,10 +261,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   switch(id) {
-  case M_EMACS_PLUS:
-    return MACRODOWN(D(LCTL), T(X), T(EQUAL), T(G), U(LCTL), END);
-  case M_EMACS_MINU:
-    return MACRODOWN(D(LCTL), T(X), T(MINUS), T(G), U(LCTL), END);
   case M_PASSWD:
     return MACRODOWN(D(LGUI), T(SLSH), T(P), U(LGUI), END);
   case M_TODO:
