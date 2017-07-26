@@ -262,11 +262,11 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   switch(id) {
   case M_PASSWD:
-    return MACRODOWN(D(LGUI), T(SLSH), T(P), U(LGUI), END);
+    return MACRODOWN(D(LGUI), T(SCLN), T(P), U(LGUI), END);
   case M_TODO:
-    return MACRODOWN(D(LGUI), T(SLSH), T(T), U(LGUI), END);
+    return MACRODOWN(D(LGUI), T(SCLN), T(T), U(LGUI), END);
   case M_CALC:
-    return MACRODOWN(D(LGUI), T(SLSH), T(C), U(LGUI), END);
+    return MACRODOWN(D(LGUI), T(SCLN), T(C), U(LGUI), END);
   };
 
   return MACRO_NONE;
